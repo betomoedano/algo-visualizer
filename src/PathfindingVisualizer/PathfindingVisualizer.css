@@ -1,0 +1,7 @@
+.row {
+  height: 20px;
+}
+
+.board {
+  border: 20px solid gray;
+}
