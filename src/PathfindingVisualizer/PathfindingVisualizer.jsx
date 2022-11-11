@@ -2,12 +2,12 @@ import * as React from "react";
 import Node from "./Node/Node";
 import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 import "./PathfindingVisualizer.css";
-const BOARD_SIZE = 50;
+const BOARD_SIZE = 30;
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
+const FINISH_NODE_ROW = 29;
+const FINISH_NODE_COL = 29;
 
 export default function PathfindingVisualizer() {
   const [board, setBoard] = React.useState(getInitialGrid);
