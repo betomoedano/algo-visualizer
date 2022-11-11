@@ -11,9 +11,17 @@ export default function Node({
   onMouseUp,
   row,
 }) {
+  const extraClassName = isFinish
+    ? "end"
+    : isStart
+    ? "start"
+    : isWall
+    ? "selected"
+    : "";
   return (
     <div
-      className={isWall ? "node selected" : "node"}
+      id={`node-${row}-${col}`}
+      className={`node ${extraClassName}`}
       onMouseDown={() => onMouseDown(row, col)}
       onMouseEnter={() => onMouseEnter(row, col)}
       onMouseUp={onMouseUp}

@@ -1,5 +1,6 @@
 import * as React from "react";
 import Node from "./Node/Node";
+import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 import "./PathfindingVisualizer.css";
 const BOARD_SIZE = 50;
 
@@ -13,21 +14,59 @@ export default function PathfindingVisualizer() {
   const [mouseIsPressed, setMouseIsPressed] = React.useState(false);
 
   function handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(board, row, col);
-    setBoard(newGrid);
     setMouseIsPressed(true);
+    const newGrid = getNewGridWithWallToggled(board, row, col, mouseIsPressed);
+    setBoard(newGrid);
   }
 
   function handleMouseEnter(row, col) {
     if (!mouseIsPressed) return;
-    const newGrid = getNewGridWithWallToggled(board, row, col);
+    const newGrid = getNewGridWithWallToggled(board, row, col, mouseIsPressed);
     setBoard(newGrid);
   }
   function handleMouseUp() {
     setMouseIsPressed(false);
   }
+
+  function animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-visited";
+      }, 10 * i);
+    }
+  }
+
+  function animateShortestPath(nodesInShortestPathOrder) {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-shortest-path";
+      }, 50 * i);
+    }
+  }
+
+  function visualizeDijkstra() {
+    const startNode = board[START_NODE_ROW][START_NODE_COL];
+    const finishNode = board[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const visitedNodesInOrder = dijkstra(board, startNode, finishNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
   return (
     <React.Fragment>
+      <button onClick={visualizeDijkstra}>
+        Visualize Dijkstra's Algorithm
+      </button>
       <div className="board">
         {board.map((row, rowIdx) => (
           <div key={rowIdx} className="row">
@@ -80,12 +119,12 @@ function createNode(col, row) {
   };
 }
 
-const getNewGridWithWallToggled = (grid, row, col) => {
+const getNewGridWithWallToggled = (grid, row, col, mouseIsPressed) => {
   const newGrid = grid.slice();
   const node = newGrid[row][col];
   const newNode = {
     ...node,
-    isWall: !node.isWall,
+    isWall: mouseIsPressed ? true : !node.isWall,
   };
   newGrid[row][col] = newNode;
   return newGrid;
